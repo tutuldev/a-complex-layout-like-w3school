@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Sidebar and Counters</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --counter-value: 0px; /* Counter 1 value */
+      --footer-counter-value: 0px; /* Counter 2 value */
+    }
+
+    #sidebar {
+      height: calc(100vh - (65px + var(--counter-value) + var(--footer-counter-value))); /* Dynamic height */
+    }
+
+    #counter,
+    #footer-counter {
+      position: fixed;
+      left: 20px;
+      background: red;
+      color: white;
+      font-size: 30px;
+      padding: 5px 10px;
+      z-index: 1000;
+    }
+
+    #counter {
+      top: 20px; /* Position for Counter 1 */
+    }
+
+    #footer-counter {
+      top: 80px; /* Position for Counter 2 */
+      background: blue;
+    }
+  </style>
+</head>
+<body class="m-0 p-0 box-border bg-gray-100">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full h-[65px] bg-black text-white border-b border-red-500 z-30 flex items-center justify-center">
+    <h1 class="text-lg font-bold">Dynamic Sidebar</h1>
+  </header>
+
+  <!-- Counters -->
+  <div id="counter">0</div>
+  <div id="footer-counter">0</div>
+
+  <!-- Main Content -->
+  <div class="container mx-auto flex border">
+    <!-- Sidebar -->
+    <div class="w-64 border-red-500 overflow-auto">
+      <div class="relative">
+        <div id="sidebar" class="fixed top-[65px] border border-green-600 w-64 overflow-auto">
+          <p class="mt-20">Sidebar Content</p>
+          <p class="py-96">Scrollable Content</p>
+          <p class="py-96">More Content</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="flex-1">
+      <div class="py-20">
+        <p>Lorem ipsum dolor sit amet...</p>
+      </div>
+      <div class="py-20">
+        <p>More text to scroll...</p>
+      </div>
+      <div class="py-20">
+        <p>Additional scrolling content...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="flex items-center justify-center">
+    <div class="bg-black py-20 text-white text-4xl w-full text-center">
+      <h3>Footer Section</h3>
+    </div>
+  </footer>
+
+  <script>
+    function updateCounterAndSidebar() {
+      const footer = document.querySelector('footer');
+      const counter = document.querySelector('#counter');
+      const sidebar = document.querySelector('#sidebar');
+      const footerRect = footer.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Check if page is scrollable
+      const isScrollable = document.body.scrollHeight > windowHeight;
+
+      if (!isScrollable) {
+        counter.textContent = 0;
+        document.documentElement.style.setProperty('--counter-value', '0px');
+      } else if (footerRect.top < windowHeight && footerRect.bottom > 0) {
+        // Calculate visible height
+        const visibleHeight = windowHeight - footerRect.top;
+        counter.textContent = Math.max(visibleHeight, 0);
+        document.documentElement.style.setProperty('--counter-value', `${Math.max(visibleHeight, 0)}px`);
+      } else {
+        counter.textContent = 0;
+        document.documentElement.style.setProperty('--counter-value', '0px');
+      }
+    }
+
+    function updateFooterDistance() {
+      const footer = document.querySelector('footer');
+      const footerCounter = document.querySelector('#footer-counter');
+      const sidebar = document.querySelector('#sidebar');
+      const footerRect = footer.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Check if the page is scrollable
+      const isScrollable = document.body.scrollHeight > windowHeight;
+
+      if (!isScrollable) {
+        // Calculate the distance from footer's top to viewport's bottom
+        const distance = Math.max(windowHeight - footerRect.top, 0);
+        footerCounter.textContent = distance; // Show the distance in the footer counter
+        document.documentElement.style.setProperty('--footer-counter-value', `${distance}px`);
+      } else {
+        footerCounter.textContent = 0; // Reset the counter if page is scrollable
+        document.documentElement.style.setProperty('--footer-counter-value', '0px');
+      }
+    }
+
+    // Attach events
+    window.addEventListener('scroll', () => {
+      updateCounterAndSidebar();
+      updateFooterDistance();
+    });
+
+    window.addEventListener('resize', () => {
+      updateCounterAndSidebar();
+      updateFooterDistance();
+    });
+  </script>
+
+</body>
+</html>
