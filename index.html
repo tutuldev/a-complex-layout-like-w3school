@@ -81,7 +81,7 @@
     </div>
   </footer>
 
-  <script>
+<script>
     function updateCounterAndSidebar() {
       const footer = document.querySelector('footer');
       const counter = document.querySelector('#counter');
@@ -137,7 +137,13 @@
       updateCounterAndSidebar();
       updateFooterDistance();
     });
-  </script>
+
+    // Ensure functions execute after page reload
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCounterAndSidebar();
+      updateFooterDistance();
+    });
+</script>
 
 </body>
 </html>
